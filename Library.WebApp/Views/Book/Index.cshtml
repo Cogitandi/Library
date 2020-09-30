@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Library.WebApp.ViewModels.BookViewModel>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser<Guid>> UserManager
+@{
+    var loggedUserId = UserManager.GetUserId(User);
+}
+@{
+    ViewData["Title"] = "Lista pozycji";
+}
+
+    <h1>Lista pozycji</h1>
+
+<div class="filter-nav mx-2 my-2">
+    <button class="btn btn-primary active" id="all">Wszystkie</button>
+    <button class="btn btn-success" id="available">Dostępne do wypożyczenia</button>
+    <button class="btn btn-danger" id="borrowed">Wypożyczone</button>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @if (item.Status.Equals("Dostępna"))
+                    {
+                        @Html.ActionLink("Wypożycz", "Borrow", new { id = item.Id }, new { @class = "btn btn-success" })
+                    }
+                    else if (item.Status.Equals("Wypożyczona"))
+                    {
+                        if (item.BorrowedUserId == loggedUserId)
+                        {
+                            @Html.ActionLink("Zwróć", "Return", new { id = item.Id }, new { @class = "btn btn-warning" })
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-danger">Wypożyczona</button>
+                        }
+
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $("#all").click(function () {
+            $("table > tbody > tr").each(function () {
+                $(this).show();
+            })
+        });
+        $("#available").click(function () {
+            $("table > tbody > tr").each(function () {
+                var status = $(this).children().eq(2).text().trim();
+                if (status == "Dostępna") {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            })
+        });
+        $("#borrowed").click(function () {
+            $("table > tbody > tr").each(function () {
+                var status = $(this).children().eq(2).text().trim();
+                if (status == "Wypożyczona") {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            })
+        });
+    </script>
+} 
