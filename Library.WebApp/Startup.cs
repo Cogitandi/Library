@@ -26,7 +26,7 @@ namespace Library.WebApp
         {
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("ConnectionString")));
+                    Configuration.GetConnectionString("SQLCONNSTR_ConnectionString")));
                     //Environment.GetEnvironmentVariable("ConnectionString", EnvironmentVariableTarget.Process)));
             services.AddDefaultIdentity<IdentityUser<Guid>>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole<Guid>>()
